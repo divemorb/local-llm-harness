@@ -1,0 +1,51 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "share": "disabled",
+  "model": "llama/qwen3.8-27b",
+  "provider": {
+    "llama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama-server (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1",
+        "apiKey": "added-by-the-proxy"
+      },
+      "models": {
+        "qwen3.8-27b": {
+          "name": "Qwen3.8-27B (local)",
+          "limit": {
+            "context": 100000,
+            "output": 16384
+          }
+        }
+      }
+    }
+  },
+  "instructions": [],
+  "permission": {
+    "*": "deny",
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "lsp": "allow",
+    "todowrite": "allow",
+    "todoread": "allow",
+    "edit": {
+      "*": "allow",
+      "*opencode.json*": "deny",
+      "*.opencode/*": "deny",
+      "*.continue/*": "deny",
+      "*.git": "deny",
+      "*.git/*": "deny"
+    },
+    "external_directory": {
+      "*": "deny"
+    },
+    "bash": "allow",
+    "execute": "deny",
+    "webfetch": "deny",
+    "websearch": "deny"
+  }
+}

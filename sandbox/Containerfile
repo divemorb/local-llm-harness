@@ -1,0 +1,17 @@
+# Sandbox for unattended Qwen runs (built on the host, never by Qwen).
+# Qwen gets a shell in here; isolation replaces approval: no network (only
+# llama-server via a forwarded unix socket), no podman socket, no git, no home.
+# This base has Python and ripgrep only. Add your project's toolchain below
+# (see examples/rust/README.md for a Rust example); everything Qwen needs
+# must be in the image or in a read-only mount, because there is no network.
+# opencode itself is mounted from the host (sandbox.py, OPENCODE_BIN).
+FROM docker.io/library/debian:trixie-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 ripgrep ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+# --- your toolchain here, e.g.:
+# RUN apt-get update && apt-get install -y --no-install-recommends nodejs && rm -rf /var/lib/apt/lists/*
+COPY llm-forward.py /opt/sandbox/llm-forward.py
+# Qwen runs as uid 1000 (--user, keep-id); the toolchain stays root-owned.
+ENV HOME=/tmp/home
+ENTRYPOINT ["python3", "/opt/sandbox/llm-forward.py"]

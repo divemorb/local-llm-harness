@@ -1,0 +1,10 @@
+# Mounted read-only at $CARGO_HOME/config.toml in the sandbox: crates come
+# only from the vendored, pinned sources (prepared by the watchdog).
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "/vendor"
+
+[net]
+offline = true

@@ -1,0 +1,51 @@
+{
+ "repo": "/home/divemorb/qwen-hello",
+ "worktree": "/home/divemorb/qwen-hello-work",
+ "branch": "hello",
+ "base": "main",
+ "prompts_dir": "/home/divemorb/local-llm-harness/examples/hello/prompts",
+ "sandbox": {
+  "image": "localhost/qwen-sandbox",
+  "memory": "4g",
+  "pids": 512,
+  "env": {"PYTHONDONTWRITEBYTECODE": "1"}
+ },
+ "environment_note": "Python 3 with the standard library only.",
+ "verify": [
+  {"cmd": "python3 -m unittest discover -s tests -v", "note": "all tests (about a second)"}
+ ],
+ "fail_patterns": ["^FAIL: (\\S+)", "^ERROR: (\\S+)"],
+ "passed_pattern": "^Ran (\\d+) tests?",
+ "max_lines": {"patterns": ["*.py"], "warn": 200, "limit": 300},
+ "forbidden": [],
+ "max_attempts": 3,
+ "attempt_timeout_min": 20,
+ "idle_timeout_min": 8,
+ "verify_timeout_s": 300,
+ "reasoning_budget": 4096,
+ "drop_old_thinking": true,
+ "max_summaries_without_edit": 4,
+ "skip_failed": true,
+ "keep": ["H1"],
+ "steps": [
+  {
+   "id": "H1",
+   "title": "slugify()",
+   "prompt": "hello-steps.md#H1",
+   "allowed": ["hello/text.py", "tests/test_text.py"],
+   "extra_verify": [
+    "python3 -c \"from hello.text import slugify as s; assert s('Hello, World!') == 'hello-world'; assert s('  Grüße  aus Köln ') == 'grusse-aus-koln'; assert s('***') == ''\""
+   ]
+  },
+  {
+   "id": "H2",
+   "title": "a command line",
+   "prompt": "hello-steps.md#H2",
+   "allowed": ["hello/__main__.py", "tests/test_main.py"],
+   "extra_verify": [
+    "out=$(python3 -m hello 'Ada Lovelace'); test \"$out\" = 'Hello, Ada Lovelace! (ada-lovelace)' || { echo \"python3 -m hello 'Ada Lovelace' printed: $out\"; exit 1; }"
+   ],
+   "pause_after": true
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+# generated at run time
+runs/
+cache/
+.*.lock
+__pycache__/
+*.bak*
+*.orig
+# your own plans (machine-specific paths); examples/ holds the shared ones
+plans/
