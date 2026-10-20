@@ -71,6 +71,7 @@ Failed attempts by reason: **output limit or full context 26**, files outside th
 - **No reference code** if the model's work is meant to count; behaviour, facts and tests instead. With the code in the prompt, the planner did the work (and paid for it), and the model only copies.
 - **Resolve spec conflicts in the prompt.** "A comment on every public item" and "no file over 400 lines" collide near the limit; say how to balance them.
 - **A size limit needs room.** It applies to code, never to data files that only grow; a file at the limit is split before the plan, not by the model during it (one night lost three attempts to "401 lines").
+- **Test steps get a check that counts what the tests catch.** A mutation tool (e.g. cargo-mutants) finds code changes no test notices; the step's gate applies exactly those changes to a copy and fails while the tests still pass. And a test must not take its expected value from the constant it guards (a test of a size cap that uses the cap constant follows a mutated cap): write the number.
 - **A change to an input re-records its outputs.** If a step changes files that generated expectations depend on (byte hashes, goldens), allow those outputs and say how to regenerate them, or the step can't pass.
 - **New infrastructure needs its rules written down.** A new browser driver returned before the page's requests finished and leaked storage between pages; the model spent 75 minutes tuning waits. A five-minute diagnosis by the planner and two sentences in the prompt fixed it.
 
