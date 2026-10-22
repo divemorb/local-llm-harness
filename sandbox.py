@@ -12,6 +12,8 @@ container with
 * dependencies only from what the plan's ``prepare`` commands fetched on
   the host (with network, outside the sandbox) into a cache that is
   mounted read-only (``sandbox.mounts``);
+* the plan's ``material`` folder, if any, at /material (read-only):
+  reference files the steps copy from;
 * uid 1000, read-only root filesystem, all capabilities dropped,
   no-new-privileges, CPU/memory/pids limits;
 * opencode's config mounted read-only (its directory is a tmpfs because
@@ -121,6 +123,9 @@ def start(plan, wt: pathlib.Path, name: str, sock_dir: pathlib.Path, oc_data: pa
             "-e", "XDG_STATE_HOME=/tmp/state", "-e", "XDG_CACHE_HOME=/tmp/cache",
             *agent_env,
             "-v", f"{wt}:/work", "-v", f"{wt / '.git'}:/work/.git:ro",
+            # the plan's reference files (decided code, prototypes) for the steps to copy from;
+            # Qwen's sandbox only: the verification never sees them
+            *(["-v", f"{plan['material']}:/material:ro"] if plan.get("material") else []),
             "-v", f"{sock_dir}:/run/llm",
             "-v", f"{OPENCODE_BIN}:/usr/local/bin/opencode:ro",
             "-v", f"{config}:/tmp/config/opencode/opencode.json:ro",

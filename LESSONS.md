@@ -90,6 +90,7 @@ Failed attempts by reason: **output limit or full context 26**, files outside th
 - **Never let the model stop processes in its own container.** Its shell shares the agent's process group; a broad `kill` ended the agent itself, three times in one night. Give it a helper that starts and stops what it needs in separate process groups (not part of this harness: write one when steps start servers), and forbid kills in the prompt.
 - **Locks must survive a kill.** A watchdog stopped by the service manager left its lock; every later start failed at once, and a "skip the failed step" script took that for a failing step. Check whether the lock's process still lives; never blame a step for a run that ended within seconds.
 - **A container started from inside a service unit dies with the unit**; start long-lived ones in their own scope.
+- **A plan that continues an existing branch needs the start commit as `base`, never the branch name**: done steps are the commits in `base..branch`, so a base that moves with the branch made the watchdog start the committed step again and crash on its attempt folder. The watchdog now refuses such a plan.
 
 ## Operating it
 

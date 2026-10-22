@@ -60,7 +60,7 @@ A plan is one JSON file; its name (without `.json`) names the run folder, lock a
 
 | Key | Meaning |
 |---|---|
-| `repo`, `worktree`, `branch`, `base` | The repository, the worktree the watchdog creates (from `base`, or reuses), the branch the steps are committed to. A step counts as done when a commit `Step <id>: …` exists in `base..HEAD`. |
+| `repo`, `worktree`, `branch`, `base` | The repository, the worktree the watchdog creates (from `base`, or reuses), the branch the steps are committed to. A step counts as done when a commit `Step <id>: …` exists in `base..HEAD`, so `base` must not be the branch itself: to continue an existing branch, give the commit to start from (the watchdog refuses such a plan). |
 | `prompts_dir` | Where the step prompts live (outside the worktree, so Qwen can't change them). |
 | `sandbox` | `image` (required), `cpus`, `memory`, `pids`, `env`, `agent_env` (only the agent's container), `mounts` (`"HOST:CONTAINER[:ro]"`, `{cache}` and `{here}` filled in), `volumes` (container paths backed by a named volume per plan), `tmpfs`. |
 | `prepare` | Host commands that fetch what the offline sandbox needs into `cache/<plan>/` (`{worktree}`, `{cache}`), run again when one of the `inputs` changes. |
@@ -72,6 +72,7 @@ A plan is one JSON file; its name (without `.json`) names the run folder, lock a
 | `max_lines` | Optional `{"patterns": [...], "warn": N, "limit": M}`: files over `warn` are named in the prompt, a changed file over `limit` fails the step. |
 | `forbidden`, `protected` | Paths no step may change (git internals and opencode's config always); paths whose change pauses the plan for a human review. |
 | `no_read` | Globs the read tool refuses (e.g. a big test harness Qwen reads in circles). |
+| `material` | A host folder mounted read-only at `/material` in the work sandbox only (never in the verification): decided code or a prototype the steps copy from, instead of pasting it into prompts. |
 | `max_attempts`, `attempt_timeout_min`, `idle_timeout_min`, `verify_timeout_s`, `max_tool_errors_in_row`, `max_summaries_without_edit` | Limits per attempt. |
 | `reasoning_budget`, `drop_old_thinking` | Thinking cap per request; drop the thinking of earlier replies from the history. |
 | `context_tokens`, `opencode_context` | llama-server's `-c` and what opencode is told (keep the latter lower, so its session summary fits). |

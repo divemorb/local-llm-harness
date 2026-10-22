@@ -280,6 +280,10 @@ def load_plan(path):
     plan = json.loads(pathlib.Path(path).read_text())
     if "sandbox" not in plan:
         sys.exit("this watchdog version needs a 'sandbox' block in the plan")
+    if plan.get("base") and plan.get("base") == plan.get("branch"):
+        # done steps are the commits in base..branch: a base that moves with the branch
+        # never shows one, so a committed step would be started again
+        sys.exit(f"plan: 'base' is the branch itself ({plan['base']}); use the commit to start from (its sha)")
     plan.setdefault("max_attempts", 3)
     plan.setdefault("attempt_timeout_min", 45)
     plan.setdefault("idle_timeout_min", 12)
